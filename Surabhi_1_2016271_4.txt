@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+unsigned rev(unsigned val)
+{
+   val=((val&0x55555555)<<1)|((val>>1)&0x55555555);
+   val=((val&0x33333333)<<2)|((val>>2)&0x33333333);
+   val=((val&0x0F0F0F0F)<<4)|((val>>4)&0x0F0F0F0F);
+   
+   val=(val<<24)|((val&0xFF00)<<8)|((val>>8)&0xFF00)|(val>>24);
+   
+   return val;
+}
+
+
+unsigned int crc32acalc(char *string) 
+{
+   unsigned int in,crcval;
+   crcval=0xFFFFFFFF;
+ 
+   int i=0;  
+   while(string[i]!=0) 
+   {
+      in=string[i];            
+      in=rev(in);         
+      
+      for(int j=0;j<=7;j++) 
+      {
+         if(((int)(crcval^in))<0)
+              crcval=(crcval<<1)^0x04C11DB7;
+         
+         else 
+            crcval=crcval<<1;
+         
+         in=in<<1;
+      }
+
+      i++;
+   }
+
+   return rev(~crcval);
+}
+
+
+int main() 
+{
+   char input[125];
+   int size;
+   scanf("%d",&size);
+   gets();
+   gets(input);
+   printf("%lu",crc32acalc(input));
+   return 0;
+}

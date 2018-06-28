@@ -1,0 +1,46 @@
+#include <stdio.h>
+
+
+unsigned int crc32ccalc(unsigned char *string) 
+{
+   static unsigned int t[256];
+   unsigned int in, crcval, m;
+   
+
+   if(t[1]==0) 
+   {
+      for(in=0; in<=255; in++) 
+      {
+         crcval=in;
+         for(int j=7; j>=0; j--) 
+         {
+            m=-(crcval&1);
+            crcval=(crcval>>1)^(0xEDB88320&m);
+         }
+         
+         t[in]=crcval;
+      }
+   }
+
+   int i=0;
+   crcval=0xFFFFFFFF;
+   while((in=string[i])!=0)
+   {
+      crcval=(crcval>>8)^t[(crcval^in)&0xFF];
+      i++;
+   }
+   
+   return ~crcval;
+}
+
+
+int main(void)
+{
+  char input[125]; 
+  int size;
+  scanf("%d",&size);
+  gets();
+  gets(input);
+  printf("%ld",crc32ccalc(input));
+  return 0;
+}
